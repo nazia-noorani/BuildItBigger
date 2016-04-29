@@ -22,7 +22,7 @@ public class MainActivity extends ActionBarActivity implements AsyncTaskListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog = new ProgressDialog(this);
     }
 
 
@@ -60,9 +60,10 @@ public class MainActivity extends ActionBarActivity implements AsyncTaskListener
     public void tellJoke(View view){
         progressDialog.setMessage("Loading..");
         progressDialog.show();
+
 //        if(mEndpointsAsyncTask == null){
-            mEndpointsAsyncTask =  new EndpointsAsyncTask(this);
-            mEndpointsAsyncTask.execute();
+        mEndpointsAsyncTask =  new EndpointsAsyncTask(this);
+        mEndpointsAsyncTask.execute();
 //        }
 
 //        Toast.makeText(this,MyClass.getJokes(), Toast.LENGTH_SHORT).show();
@@ -86,8 +87,16 @@ public class MainActivity extends ActionBarActivity implements AsyncTaskListener
     }
 
     @Override
-    public void onError(String error) {
-        progressDialog.dismiss();
-        Toast.makeText(this,error, Toast.LENGTH_LONG).show();
+    public void onError(final String error) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.dismiss();
+                Toast.makeText(MainActivity.this,error, Toast.LENGTH_LONG).show();
+            }
+        });
+
+
     }
 }
